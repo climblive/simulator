@@ -1,7 +1,9 @@
 package app.climblive.simulator.dto
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties
 import java.time.OffsetDateTime
 
+@JsonIgnoreProperties(ignoreUnknown = true)
 data class ContenderDto (
     var id: Int?,
     var compClassId: Int? = null,
