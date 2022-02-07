@@ -73,14 +73,14 @@ class Contender(private val registrationCode: String, private val reportsChannel
         }
 
         runOperation(Operation.GetCompClasses, false) {
-            compClasses = Fuel.get("${Configuration.apiUrl}/compClass")
+            compClasses = Fuel.get("${Configuration.apiUrl}/contest/${contender?.contestId}/compClass")
                 .header("Authorization", "Regcode $registrationCode")
                 .awaitObjectResult(Deserializers.CompClassListDeserializer)
                 .get()
         }
 
         runOperation(Operation.GetTicks, false) {
-            ticks = Fuel.get("${Configuration.apiUrl}/tick")
+            ticks = Fuel.get("${Configuration.apiUrl}/contender/${contender?.id}/tick")
                 .header("Authorization", "Regcode $registrationCode")
                 .awaitObjectResult(Deserializers.TickListDeserializer)
                 .get()
@@ -88,7 +88,7 @@ class Contender(private val registrationCode: String, private val reportsChannel
         }
 
         runOperation(Operation.GetProblems, false) {
-            Fuel.get("${Configuration.apiUrl}/problem")
+            Fuel.get("${Configuration.apiUrl}/contest/${contender?.contestId}/problem")
                 .header("Authorization", "Regcode $registrationCode")
                 .awaitObjectResult(Deserializers.ProblemListDeserializer)
                 .get()
@@ -148,7 +148,7 @@ class Contender(private val registrationCode: String, private val reportsChannel
         var tick = TickDto(null, null, contender?.id!!, problemId, Random.nextBoolean())
 
         runOperation(Operation.CreateTick, true) {
-            tick = Fuel.post("${Configuration.apiUrl}/tick")
+            tick = Fuel.post("${Configuration.apiUrl}/contender/${contender?.id}/tick")
                 .header("Authorization", "Regcode $registrationCode")
                 .header("Content-Type", "application/json")
                 .body(Deserializers.objectMapper.writeValueAsString(tick))
