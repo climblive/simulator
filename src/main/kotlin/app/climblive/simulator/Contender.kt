@@ -66,21 +66,21 @@ class Contender(private val registrationCode: String, private val reportsChannel
 
     suspend fun loadData() {
         runOperation(Operation.GetContender, false) {
-            contender = Fuel.get("${Configuration.apiUrl}/contender/findByCode?code=$registrationCode")
+            contender = Fuel.get("${Configuration.apiUrl}/contenders/findByCode?code=$registrationCode")
                 .header("Authorization", "Regcode $registrationCode")
                 .awaitObjectResult(Deserializers.ContenderDeserializer)
                 .get()
         }
 
         runOperation(Operation.GetCompClasses, false) {
-            compClasses = Fuel.get("${Configuration.apiUrl}/contest/${contender?.contestId}/compClass")
+            compClasses = Fuel.get("${Configuration.apiUrl}/contests/${contender?.contestId}/compClasses")
                 .header("Authorization", "Regcode $registrationCode")
                 .awaitObjectResult(Deserializers.CompClassListDeserializer)
                 .get()
         }
 
         runOperation(Operation.GetTicks, false) {
-            ticks = Fuel.get("${Configuration.apiUrl}/contender/${contender?.id}/tick")
+            ticks = Fuel.get("${Configuration.apiUrl}/contenders/${contender?.id}/ticks")
                 .header("Authorization", "Regcode $registrationCode")
                 .awaitObjectResult(Deserializers.TickListDeserializer)
                 .get()
@@ -88,7 +88,7 @@ class Contender(private val registrationCode: String, private val reportsChannel
         }
 
         runOperation(Operation.GetProblems, false) {
-            Fuel.get("${Configuration.apiUrl}/contest/${contender?.contestId}/problem")
+            Fuel.get("${Configuration.apiUrl}/contests/${contender?.contestId}/problems")
                 .header("Authorization", "Regcode $registrationCode")
                 .awaitObjectResult(Deserializers.ProblemListDeserializer)
                 .get()
@@ -112,7 +112,7 @@ class Contender(private val registrationCode: String, private val reportsChannel
         contender?.compClassId = compClass.id
 
         runOperation(Operation.UpdateContender, true) {
-            contender = Fuel.put("${Configuration.apiUrl}/contender/${contender?.id}")
+            contender = Fuel.put("${Configuration.apiUrl}/contenders/${contender?.id}")
                 .header("Authorization", "Regcode $registrationCode")
                 .header("Content-Type", "application/json")
                 .body(Deserializers.objectMapper.writeValueAsString(contender))
@@ -128,7 +128,7 @@ class Contender(private val registrationCode: String, private val reportsChannel
         contender?.compClassId = compClass.id
 
         runOperation(Operation.UpdateContender, true) {
-            contender = Fuel.put("${Configuration.apiUrl}/contender/${contender?.id}")
+            contender = Fuel.put("${Configuration.apiUrl}/contenders/${contender?.id}")
                 .header("Authorization", "Regcode $registrationCode")
                 .header("Content-Type", "application/json")
                 .body(Deserializers.objectMapper.writeValueAsString(contender))
@@ -148,7 +148,7 @@ class Contender(private val registrationCode: String, private val reportsChannel
         var tick = TickDto(null, null, contender?.id!!, problemId, Random.nextBoolean())
 
         runOperation(Operation.CreateTick, true) {
-            tick = Fuel.post("${Configuration.apiUrl}/contender/${contender?.id}/tick")
+            tick = Fuel.post("${Configuration.apiUrl}/contenders/${contender?.id}/ticks")
                 .header("Authorization", "Regcode $registrationCode")
                 .header("Content-Type", "application/json")
                 .body(Deserializers.objectMapper.writeValueAsString(tick))
@@ -172,7 +172,7 @@ class Contender(private val registrationCode: String, private val reportsChannel
         var tick = ticks[problemId]
 
         runOperation(Operation.DeleteTick, true) {
-            Fuel.delete("${Configuration.apiUrl}/tick/${tick?.id}")
+            Fuel.delete("${Configuration.apiUrl}/ticks/${tick?.id}")
                 .header("Authorization", "Regcode $registrationCode")
                 .awaitStringResult()
         }
@@ -194,7 +194,7 @@ class Contender(private val registrationCode: String, private val reportsChannel
         tick.isFlash = Random.nextBoolean()
 
         runOperation(Operation.UpdateTick, true) {
-            tick = Fuel.put("${Configuration.apiUrl}/tick/${tick.id}")
+            tick = Fuel.put("${Configuration.apiUrl}/ticks/${tick.id}")
                 .header("Authorization", "Regcode $registrationCode")
                 .header("Content-Type", "application/json")
                 .body(Deserializers.objectMapper.writeValueAsString(tick))
